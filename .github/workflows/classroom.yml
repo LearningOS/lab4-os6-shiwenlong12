@@ -38,4 +38,5 @@ jobs:
           fi
           sudo make install
           qemu-system-riscv64 --version
+          echo "KEY=VALUE" >>$GITHUB_OUTPUT
       - uses: education/autograding@v1
