@@ -32,8 +32,8 @@ impl Semaphore {
         let tid = task_inner.res.as_ref().unwrap().tid;
         let mut inner = self.inner.exclusive_access();
         inner.count += 1;
-        process_inner._allocation[tid][id] -= 1;
-        process_inner._available[id] += 1;
+        process_inner.semaphore_allocation[tid][id] -= 1;
+        process_inner.semaphore_available[id] += 1;
         drop(process_inner);
         drop(process);
         drop(task_inner);
@@ -52,7 +52,6 @@ impl Semaphore {
         let task = current_task().unwrap();
         let task_inner = task.inner_exclusive_access();
         let tid = task_inner.res.as_ref().unwrap().tid;
-        //process_inner._need[tid][id] += 1;
         let mut inner = self.inner.exclusive_access();
         inner.count -= 1;
         if inner.count < 0 {
@@ -63,9 +62,9 @@ impl Semaphore {
             block_current_and_run_next();
         }
         else {
-            process_inner._available[id] -= 1;
-            process_inner._need[tid][id] -= 1;
-            process_inner._allocation[tid][id] += 1;
+            process_inner.semaphore_available[id] -= 1;
+            process_inner.semaphore_need[tid][id] -= 1;
+            process_inner.semaphore_allocation[tid][id] += 1;
             drop(inner);
             drop(process_inner);
             drop(task_inner);

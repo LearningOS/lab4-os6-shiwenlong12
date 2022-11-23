@@ -42,10 +42,10 @@ pub fn sys_thread_create(entry: usize, arg: usize) -> isize {
     add_task(Arc::clone(&new_task));
     let m1 = process_inner.mutex_list.len();
     let m2 = process_inner.semaphore_list.len();
-    process_inner.need.push(vec![0; m1]);
-    process_inner._need.push(vec![0; m2]);
-    process_inner.allocation.push(vec![0; m1]);
-    process_inner._allocation.push(vec![0; m2]);
+    process_inner.mutex_need.push(vec![0; m1]);
+    process_inner.semaphore_need.push(vec![0; m2]);
+    process_inner.mutex_allocation.push(vec![0; m1]);
+    process_inner.semaphore_allocation.push(vec![0; m2]);
     new_task_tid as isize
 }
 

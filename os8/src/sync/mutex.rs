@@ -73,7 +73,6 @@ impl Mutex for MutexBlocking {
         let task_inner = task.inner_exclusive_access();
         let tid = task_inner.res.as_ref().unwrap().tid;
         let mut mutex_inner = self.inner.exclusive_access();
-        //process_inner.need[tid][id] += 1;
         if mutex_inner.locked {
             mutex_inner.wait_queue.push_back(current_task().unwrap());
             drop(mutex_inner);
@@ -81,9 +80,9 @@ impl Mutex for MutexBlocking {
             drop(task_inner);
             block_current_and_run_next();
         } else {
-            process_inner.available[id] -= 1;
-            process_inner.need[tid][id] -= 1;
-            process_inner.allocation[tid][id] += 1;
+            process_inner.mutex_available[id] -= 1;
+            process_inner.mutex_need[tid][id] -= 1;
+            process_inner.mutex_allocation[tid][id] += 1;
             mutex_inner.locked = true;
             drop(mutex_inner);
             drop(process_inner);
