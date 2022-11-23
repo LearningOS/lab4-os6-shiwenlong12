@@ -59,6 +59,7 @@ use thread::*;
 
 /// handle syscall exception with `syscall_id` and other arguments
 pub fn syscall(syscall_id: usize, args: [usize; 4]) -> isize {
+    //println!("syscall_id:{}", syscall_id);
     match syscall_id {
         SYSCALL_DUP => sys_dup(args[0]),
         SYSCALL_LINKAT => sys_linkat(args[1] as *const u8, args[3] as *const u8),

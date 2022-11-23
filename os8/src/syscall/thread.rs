@@ -1,10 +1,10 @@
 use crate::{
     mm::kernel_token,
-    task::{add_task, current_task, TaskControlBlock},
+    task::{add_task, current_task, TaskControlBlock, current_process},
     trap::{trap_handler, TrapContext},
 };
 use alloc::sync::Arc;
-
+use alloc::vec;
 pub fn sys_thread_create(entry: usize, arg: usize) -> isize {
     let task = current_task().unwrap();
     let process = task.process.upgrade().unwrap();
@@ -40,6 +40,12 @@ pub fn sys_thread_create(entry: usize, arg: usize) -> isize {
     tasks[new_task_tid] = Some(Arc::clone(&new_task));
     // add new task to scheduler
     add_task(Arc::clone(&new_task));
+    let m1 = process_inner.mutex_list.len();
+    let m2 = process_inner.semaphore_list.len();
+    process_inner.need.push(vec![0; m1]);
+    process_inner._need.push(vec![0; m2]);
+    process_inner.allocation.push(vec![0; m1]);
+    process_inner._allocation.push(vec![0; m2]);
     new_task_tid as isize
 }
 

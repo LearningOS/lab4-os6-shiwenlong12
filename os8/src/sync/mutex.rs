@@ -1,6 +1,6 @@
 use super::UPSafeCell;
 use crate::task::TaskControlBlock;
-use crate::task::{add_task, current_task};
+use crate::task::{add_task, current_task, current_process};
 use crate::task::{block_current_and_run_next, suspend_current_and_run_next};
 use alloc::{collections::VecDeque, sync::Arc};
 
@@ -66,13 +66,28 @@ impl MutexBlocking {
 
 impl Mutex for MutexBlocking {
     fn lock(&self) {
+        let process = current_process();
+        let mut process_inner = process.inner_exclusive_access();
+        let id = process_inner.get_id() as usize;
+        let task = current_task().unwrap();
+        let task_inner = task.inner_exclusive_access();
+        let tid = task_inner.res.as_ref().unwrap().tid;
         let mut mutex_inner = self.inner.exclusive_access();
+        //process_inner.need[tid][id] += 1;
         if mutex_inner.locked {
             mutex_inner.wait_queue.push_back(current_task().unwrap());
             drop(mutex_inner);
+            drop(process_inner);
+            drop(task_inner);
             block_current_and_run_next();
         } else {
+            process_inner.available[id] -= 1;
+            process_inner.need[tid][id] -= 1;
+            process_inner.allocation[tid][id] += 1;
             mutex_inner.locked = true;
+            drop(mutex_inner);
+            drop(process_inner);
+            drop(task_inner);
         }
     }
 

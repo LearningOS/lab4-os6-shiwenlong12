@@ -30,11 +30,14 @@ pub struct ProcessControlBlockInner {
     pub mutex_list: Vec<Option<Arc<dyn Mutex>>>,
     pub semaphore_list: Vec<Option<Arc<Semaphore>>>,
     pub condvar_list: Vec<Option<Arc<Condvar>>>,
-
-    pub deadlock_detect: bool,
-    pub available: Vec<usize>,
-    // pub allocation: Vec<Vec<usize>>,
-    // pub need: Vec<Vec<usize>>,
+    pub deadlock_det: bool,
+    pub available: Vec<i32>,
+    pub _available: Vec<i32>,
+    pub allocation: Vec<Vec<i32>>,
+    pub _allocation: Vec<Vec<i32>>,
+    pub need: Vec<Vec<i32>>,
+    pub _need: Vec<Vec<i32>>,
+    pub id: i32,
 }
 
 impl ProcessControlBlockInner {
@@ -66,6 +69,76 @@ impl ProcessControlBlockInner {
 
     pub fn get_task(&self, tid: usize) -> Arc<TaskControlBlock> {
         self.tasks[tid].as_ref().unwrap().clone()
+    }
+    pub fn get_id(&self) -> i32 {
+        self.id
+    }
+    pub fn deadlock_detect(&self) -> bool{
+        let n =  self.thread_count();
+        let m1 = self.available.len();
+        let m2 = self._available.len();
+        let mut work: Vec<i32> = self.available.clone();
+        let mut _work: Vec<i32> = self._available.clone();
+        // println!("work:{:?}",work);
+        // println!("_work:{:?}",_work);
+        // println!("need:");
+        // for i in 0..n {
+        //     println!("{:?}",self.need[i]);
+        // }
+        // println!("_need:");
+        // for i in 0..n {
+        //     println!("{:?}",self._need[i]);
+        // }
+        // println!("allocation:");
+        // for i in 0..n {
+        //     println!("{:?}",self.allocation[i]);
+        // }
+        // println!("_allocation:");
+        // for i in 0..n {
+        //     println!("{:?}",self._allocation[i]);
+        // }
+        let mut Finish: Vec<bool> = vec![false; n];
+        let mut find_available: bool = false;
+        let mut find_unfinish: bool = false;
+        loop {
+            find_unfinish = false;
+            for i in 0..n {
+                if Finish[i] == false {
+                    find_unfinish = true;
+                    find_available = true;
+                    for j in 0..m1 {
+                        if self.need[i][j] > work[j] {
+                            find_available = false;
+                            break;
+                        }
+                    }
+                    for j in 0..m2 {
+                        if self._need[i][j] > _work[j] {
+                            find_available = false;
+                            break;
+                        }
+                    }
+                    if find_available {
+                        for j in 0..m1 {
+                            work[j] = work[j] + self.allocation[i][j];
+                        }
+                        for j in 0..m2 {
+                            _work[j] = _work[j] + self._allocation[i][j];
+                        }
+                        Finish[i] = true;
+                        break;
+                    }
+                }
+            }
+            if find_unfinish == false {
+                println!("detect no dead");
+                return false;
+            }
+            if find_available == false {
+                println!("detect dead");
+                return true;
+            }
+        }
     }
 }
 
@@ -102,11 +175,14 @@ impl ProcessControlBlock {
                     mutex_list: Vec::new(),
                     semaphore_list: Vec::new(),
                     condvar_list: Vec::new(),
-
-                    deadlock_detect: false,
+                    deadlock_det: false,
                     available: Vec::new(),
-                    // allocation: Vec::new(),
-                    // need: Vec::new(),
+                    _available: Vec::new(),
+                    allocation: vec![Vec::new(); 1],
+                    _allocation: vec![Vec::new(); 1],
+                    need: vec![Vec::new(); 1],
+                    _need: vec![Vec::new(); 1],
+                    id: -1,
                 })
             },
         });
@@ -228,11 +304,14 @@ impl ProcessControlBlock {
                     mutex_list: Vec::new(),
                     semaphore_list: Vec::new(),
                     condvar_list: Vec::new(),
-
-                    deadlock_detect: false,
+                    deadlock_det: false,
                     available: Vec::new(),
-                    // allocation: Vec::new(),
-                    // need: Vec::new(),
+                    _available: Vec::new(),
+                    allocation: vec![Vec::new(); 1],
+                    _allocation: vec![Vec::new(); 1],
+                    need: vec![Vec::new(); 1],
+                    _need: vec![Vec::new(); 1],
+                    id: -1,
                 })
             },
         });
@@ -287,11 +366,14 @@ impl ProcessControlBlock {
                     mutex_list: Vec::new(),
                     semaphore_list: Vec::new(),
                     condvar_list: Vec::new(),
-
-                    deadlock_detect: false,
+                    deadlock_det: false,
                     available: Vec::new(),
-                    // allocation: Vec::new(),
-                    // need: Vec::new(),
+                    _available: Vec::new(),
+                    allocation: vec![Vec::new(); 1],
+                    _allocation: vec![Vec::new(); 1],
+                    need: vec![Vec::new(); 1],
+                    _need: vec![Vec::new(); 1],
+                    id: -1,
                 })
             },
         });
