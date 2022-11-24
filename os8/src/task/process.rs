@@ -116,7 +116,7 @@ impl ProcessControlBlockInner {
                     }
                 }
             }
-            步骤4
+            //步骤4
             if find_unfinish == false {
                 println!("detect no dead");
                 return false;
