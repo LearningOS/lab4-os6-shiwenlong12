@@ -1,62 +1,22 @@
-# Open-Source OS Training Comp 2022
-
-Welcome to Open-Source OS Training Comp 2022（欢迎加入2022 年开源操作系统训练营）
-
-## 重要信息
-
-- **2022.11.01：2022 秋冬季训练营启动交流会，会议时间：2022/11/01 20:00-21:00 ，#腾讯会议号：838-197-763。请报名的同学参加。**
-- [**Stage1 SCHEDULING**](./scheduling.md) & [**Stage2 SCHEDULING**](https://github.com/LearningOS/oscomp-kernel-training)（2022 年开源操作系统训练营的第一/二阶段安排，可根据这些阶段安排的信息进行自学和自我训练）
-- [**News**](./news.md)（2022 年开源操作系统训练营的新闻和纪要）
-- [**QA**](./Q**A.md)（常见问题解答）
-- **Online Ranking**（训练营在线排行榜）
-  - [第一阶段排行：Rust Lang & rCore Kernel](https://learningos.github.io/classroom-grad**ing/)
-  - [第二阶段排行：OS Kernel Implementation in OSCOMP2022](https://os-autograding.github.io/classroom-grading-template/)
-- [**Learning Resource**](./relatedinfo.md)（训练营学习资源）
-
-## 历史
-
-- [open-source os training comp 2021](https://github.com/rcore-os/rCore/wiki/os-tutorial-summer-of-code-2021)
-- [open-source os training comp 2020](https://github.com/rcore-os/rCore/wiki/os-tutorial-summer-of-code-2020)
-
-## 开源社区负责人
-- 李明 微信id：limingth
-
-## 助教
-- 唐洪雨 微信id：thy1037
-- 刘逸珑 微信id：onedragon424
-- 陈文杰 微信id：tor4zS6
-
-## 技术指导委员会
-
-- 陈向群
-- 吴庆波
-- 潘爱民
-- 张汉东
-- 赵霞
-- 曹东刚
-- 李栋
-- 向勇
-- 陈渝
-- 李国良
-- 任炬
-
-## 支持与合作单位
-
-- [rcore-os 开源社区](https://github.com/rcore-os)
-- [木兰开源社区](https://portal.mulanos.cn)
-- CCF开源发展委员会
-- CCF系统软件专业技术委员会
-- 清华大学
-- 北京工商大学
-- 国防科技大学
-- CSDN
-- 毛豆教育
-- 鹏城实验室
-- 启元实验室
-- 中关村实验室
-- 之江实验室
-- 阿里云
-- 华为
-- 智谱 ai
-- 101 计划操作系统课程虚拟教研室
-- [上海大学开源社区](https://github.com/shuosc/)
+# os1
+## console.rs模块
+本模块实现了 print 和 println 宏。
+## entry.asm
+分配并使用启动栈,为内核支持函数调用.
+## lang_item.rs
+实现panic函数，并通过 #[panic_handler] 属性通知编译器用panic函数来对接 panic! 宏。
+## linker.ld
+这个链接脚本能够调整内核的内存布局。
+## logging.rs
+本模块利用 log crate 为你提供了日志功能，使用方式见 main.rs.
+## main.rs
+作为程序的入口地址。
+## sbi.rs
+基于 SBI 服务完成输出和关机
+### 对外接口
+    pub fn console_putchar(c: usize)
+这个函数可以用来在屏幕上输出一个字符，用户需要给出输出的字符c。
+    pub fn console_getchar()
+这个函数可以得到一个字符。
+    pub fn shutdown()
+这个函数用来进行关机服务。

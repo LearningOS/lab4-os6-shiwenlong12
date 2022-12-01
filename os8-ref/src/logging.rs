@@ -1,5 +1,15 @@
+<<<<<<< HEAD:os8-ref/src/logging.rs
 //! Global logger
 
+=======
+<<<<<<< HEAD:os5-1/src/logging.rs
+=======
+/*！
+本模块利用 log crate 为你提供了日志功能，使用方式见 main.rs.
+*/
+
+>>>>>>> d419fe8 (12.01):os1/src/logging.rs
+>>>>>>> 0fd7a4e (12.01):os5-1/src/logging.rs
 use log::{self, Level, LevelFilter, Log, Metadata, Record};
 
 /// a simple logger
