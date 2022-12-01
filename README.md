@@ -29,25 +29,25 @@
 ## 实现批处理操作系统
 在os1的基础上增加了以下模块。
 ## sync模块
-  pub struct UPSafeCell<T> 
+    pub struct UPSafeCell<T> 
 允许我们在 单核 上安全使用可变全局变量。
 ## syscall模块
 ### 对外接口
-  pub fn sys_write(fd: usize, buf: *const u8, len: usize) 
+    pub fn sys_write(fd: usize, buf: *const u8, len: usize) 
 将内存中缓冲区中的数据写入文件。
-  pub fn sys_exit(exit_code: i32) 
+    pub fn sys_exit(exit_code: i32) 
 打印退出的应用程序的返回值并同样调用 run_next_app 切换到下一个应用程序。
-  pub fn syscall(syscall_id: usize, args: [usize; 3]) 
+    pub fn syscall(syscall_id: usize, args: [usize; 3]) 
 syscall 函数并不会实际处理系统调用，而只是根据 syscall ID 分发到具体的处理。
 ## trap模块
 ### context.rs子模块
-  pub struct TrapContext
+    pub struct TrapContext
 结构体TrapContext是Trap 上下文，即在 Trap 发生时需要保存的物理资源内容。 
-  pub fn app_init_context(entry: usize, sp: usize)
+   pub fn app_init_context(entry: usize, sp: usize)
 修改其中的 sepc 寄存器为应用程序入口点 entry， sp 寄存器为我们设定的 一个栈指针，并将 sstatus 寄存器的 SPP 字段设置为 User 。为将特权级由U修改为S作准备。
 ### mod.rs
 #### 对外接口
-  pub fn trap_handler(cx: &mut TrapContext)
+    pub fn trap_handler(cx: &mut TrapContext)
 完成trap的分发和处理。
 ### trap.S子模块
 此模块实现了trap上下文的保存与恢复的汇编代码。
@@ -55,9 +55,9 @@ syscall 函数并不会实际处理系统调用，而只是根据 syscall ID 分
 ## batch.rs模块
 此模块的功能是找到并加载应用程序二进制码
 ### 对外接口
-  pub fn print_app_info()
+    pub fn print_app_info()
 输出app的信息
-  pub fn init() 
+    pub fn init() 
 调用 print_app_info 的时候第一次用到了全局变量 APP_MANAGER ，它也是在这个时候完成初始化；
-  pub fn run_next_app() 
+    pub fn run_next_app() 
 加载并运行下一个应用程序。
