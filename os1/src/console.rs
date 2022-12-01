@@ -1,11 +1,7 @@
 /*！
-<<<<<<< HEAD
 
 本模块实现了 print 和 println 宏。
 
-=======
-    本模块实现了 print 和 println 宏
->>>>>>> 0fd7a4e (12.01)
 */
 
 use crate::sbi::console_putchar;

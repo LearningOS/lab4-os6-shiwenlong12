@@ -1,9 +1,8 @@
-<<<<<<< HEAD
+
 OUTPUT_ARCH(riscv)
 ENTRY(_start)
 BASE_ADDRESS = 0x80200000;
 
-=======
 /*设置了目标平台为 riscv*/
 OUTPUT_ARCH(riscv)
 /*设置了整个程序的入口点为之前定义的全局符号 _start*/
@@ -18,7 +17,7 @@ BASE_ADDRESS = 0x80200000;
 冒号前面表示最终生成的可执行文件的一个段的名字，花括号内按照放置顺序描述将所有输入目标文件的哪些段放在这个段中，
 每一行格式为 <ObjectFile>(SectionName)，表示目标文件 ObjectFile 的名为 SectionName 的段需要被放进去。
 */
->>>>>>> 0fd7a4e (12.01)
+
 SECTIONS
 {
     . = BASE_ADDRESS;
