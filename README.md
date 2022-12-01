@@ -14,9 +14,9 @@
 ## sbi.rs
 基于 SBI 服务完成输出和关机
 ### 对外接口
-    pub fn console_putchar(c: usize)
+  pub fn console_putchar(c: usize)
 这个函数可以用来在屏幕上输出一个字符，用户需要给出输出的字符c。
-    pub fn console_getchar()
+  pub fn console_getchar()
 这个函数可以得到一个字符。
-    pub fn shutdown()
+  pub fn shutdown()
 这个函数用来进行关机服务。
