@@ -1,6 +1,7 @@
 #![no_std]
 #![no_main]
 
+//引入了外部库 
 extern crate user_lib;
 
 /// 由于 rustsbi 的问题，该程序无法正确退出

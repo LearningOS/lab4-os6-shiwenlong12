@@ -45,8 +45,12 @@ fn clear_bss() {
 }
 
 #[no_mangle]
+//使用 Rust 的宏将 _start 这段代码编译后的汇编代码中放在一个名为 .text.entry 的代码段中，
+//方便我们在后续链接的时候调整它的位置使得它能够作为用户库的入口。
 #[link_section = ".text.entry"]
+//定义了用户库的入口点 _start 
 pub extern "C" fn _start(argc: usize, argv: usize) -> ! {
+    //手动清空需要零初始化的 .bss 段
     clear_bss();
     unsafe {
         HEAP.lock()
@@ -66,6 +70,8 @@ pub extern "C" fn _start(argc: usize, argv: usize) -> ! {
             .unwrap(),
         );
     }
+    //用 main 函数得到一个类型为 i32 的返回值，
+    //最后调用用户库提供的 exit 接口退出应用程序，并将 main 函数的返回值告知批处理系统。
     exit(main(argc, v.as_slice()));
 }
 

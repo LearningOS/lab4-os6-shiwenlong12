@@ -40,12 +40,17 @@ pub const SYSCALL_CONDVAR_CREATE: usize = 471;
 pub const SYSCALL_CONDVAR_SIGNAL: usize = 472;
 pub const SYSCALL_CONDVAR_WAIT: usize = 473;
 
+//使用内嵌汇编来完成参数/返回值绑定和 ecall 指令的插入：
 pub fn syscall(id: usize, args: [usize; 3]) -> isize {
     let mut ret: isize;
     unsafe {
+        //使用 asm! 宏嵌入 ecall 指令来触发系统调用。
         core::arch::asm!(
             "ecall",
+            //a0 寄存器同时作为输入和输出，因此我们将 in 改成 inlateout ，
             inlateout("x10") args[0] => ret,
+            //将输入参数 args[1] 绑定到 ecall 的输入寄存器 x11 即 a1 中，
+            //编译器自动插入相关指令并保证在 ecall 指令被执行之前寄存器 a1 的值与 args[1] 相同。
             in("x11") args[1],
             in("x12") args[2],
             in("x17") id

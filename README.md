@@ -1,62 +1,63 @@
-# Open-Source OS Training Comp 2022
+# os1
+## console.rs模块
+本模块实现了 print 和 println 宏。
+## entry.asm
+分配并使用启动栈,为内核支持函数调用.
+## lang_item.rs
+实现panic函数，并通过 #[panic_handler] 属性通知编译器用panic函数来对接 panic! 宏。
+## linker.ld
+这个链接脚本能够调整内核的内存布局。
+## logging.rs
+本模块利用 log crate 为你提供了日志功能，使用方式见 main.rs.
+## main.rs
+作为程序的入口地址。
+## sbi.rs
+基于 SBI 服务完成输出和关机
+### 对外接口
+  pub fn console_putchar(c: usize)
+这个函数可以用来在屏幕上输出一个字符，用户需要给出输出的字符c。
+  pub fn console_getchar()
+这个函数可以得到一个字符。
+  pub fn shutdown()
+这个函数用来进行关机服务。
 
-Welcome to Open-Source OS Training Comp 2022（欢迎加入2022 年开源操作系统训练营）
+# os2
+## 应用程序设计
+    user/src/bin/*.rs ：各个应用程序
+    user/src/*.rs ：用户库（包括入口函数、初始化函数、I/O 函数和系统调用接口等）
+    user/src/linker.ld ：应用程序的内存布局说明。
+## 实现批处理操作系统
+在os1的基础上增加了以下模块。
+## sync模块
+    pub struct UPSafeCell<T> 
+允许我们在 单核 上安全使用可变全局变量。
+## syscall模块
+### 对外接口
+    pub fn sys_write(fd: usize, buf: *const u8, len: usize) 
+将内存中缓冲区中的数据写入文件。
+    pub fn sys_exit(exit_code: i32) 
+打印退出的应用程序的返回值并同样调用 run_next_app 切换到下一个应用程序。
+    pub fn syscall(syscall_id: usize, args: [usize; 3]) 
+syscall 函数并不会实际处理系统调用，而只是根据 syscall ID 分发到具体的处理。
+## trap模块
+### context.rs子模块
+    pub struct TrapContext
+结构体TrapContext是Trap 上下文，即在 Trap 发生时需要保存的物理资源内容。 
+   pub fn app_init_context(entry: usize, sp: usize)
+修改其中的 sepc 寄存器为应用程序入口点 entry， sp 寄存器为我们设定的 一个栈指针，并将 sstatus 寄存器的 SPP 字段设置为 User 。为将特权级由U修改为S作准备。
+### mod.rs
+#### 对外接口
+    pub fn trap_handler(cx: &mut TrapContext)
+完成trap的分发和处理。
+### trap.S子模块
+此模块实现了trap上下文的保存与恢复的汇编代码。
 
-## 重要信息
-
-- **2022.11.01：2022 秋冬季训练营启动交流会，会议时间：2022/11/01 20:00-21:00 ，#腾讯会议号：838-197-763。请报名的同学参加。**
-- [**Stage1 SCHEDULING**](./scheduling.md) & [**Stage2 SCHEDULING**](https://github.com/LearningOS/oscomp-kernel-training)（2022 年开源操作系统训练营的第一/二阶段安排，可根据这些阶段安排的信息进行自学和自我训练）
-- [**News**](./news.md)（2022 年开源操作系统训练营的新闻和纪要）
-- [**QA**](./Q**A.md)（常见问题解答）
-- **Online Ranking**（训练营在线排行榜）
-  - [第一阶段排行：Rust Lang & rCore Kernel](https://learningos.github.io/classroom-grad**ing/)
-  - [第二阶段排行：OS Kernel Implementation in OSCOMP2022](https://os-autograding.github.io/classroom-grading-template/)
-- [**Learning Resource**](./relatedinfo.md)（训练营学习资源）
-
-## 历史
-
-- [open-source os training comp 2021](https://github.com/rcore-os/rCore/wiki/os-tutorial-summer-of-code-2021)
-- [open-source os training comp 2020](https://github.com/rcore-os/rCore/wiki/os-tutorial-summer-of-code-2020)
-
-## 开源社区负责人
-- 李明 微信id：limingth
-
-## 助教
-- 唐洪雨 微信id：thy1037
-- 刘逸珑 微信id：onedragon424
-- 陈文杰 微信id：tor4zS6
-
-## 技术指导委员会
-
-- 陈向群
-- 吴庆波
-- 潘爱民
-- 张汉东
-- 赵霞
-- 曹东刚
-- 李栋
-- 向勇
-- 陈渝
-- 李国良
-- 任炬
-
-## 支持与合作单位
-
-- [rcore-os 开源社区](https://github.com/rcore-os)
-- [木兰开源社区](https://portal.mulanos.cn)
-- CCF开源发展委员会
-- CCF系统软件专业技术委员会
-- 清华大学
-- 北京工商大学
-- 国防科技大学
-- CSDN
-- 毛豆教育
-- 鹏城实验室
-- 启元实验室
-- 中关村实验室
-- 之江实验室
-- 阿里云
-- 华为
-- 智谱 ai
-- 101 计划操作系统课程虚拟教研室
-- [上海大学开源社区](https://github.com/shuosc/)
+## batch.rs模块
+此模块的功能是找到并加载应用程序二进制码
+### 对外接口
+    pub fn print_app_info()
+输出app的信息
+    pub fn init() 
+调用 print_app_info 的时候第一次用到了全局变量 APP_MANAGER ，它也是在这个时候完成初始化；
+    pub fn run_next_app() 
+加载并运行下一个应用程序。

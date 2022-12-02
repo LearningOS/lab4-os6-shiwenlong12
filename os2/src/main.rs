@@ -16,6 +16,7 @@ mod syscall;
 mod trap;
 
 core::arch::global_asm!(include_str!("entry.asm"));
+//将应用程序链接到内核
 core::arch::global_asm!(include_str!("link_app.S"));
 
 fn clear_bss() {
